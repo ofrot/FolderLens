@@ -1,0 +1,18 @@
+# Build and test outputs
+FolderLens.exe
+FolderLens.Tests.exe
+dist/
+
+# Runtime diagnostics and local results
+FolderLens-error.log
+*.fls
+
+# Editor and OS files
+.vs/
+.codex/
+.agents/
+.codex-remote-attachments/
+*.user
+*.suo
+Thumbs.db
+.DS_Store

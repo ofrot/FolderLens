@@ -1,0 +1,48 @@
+name: Build FolderLens
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Build
+        shell: powershell
+        run: .\build.ps1
+
+      - name: Test
+        shell: powershell
+        run: .\test.ps1
+
+      - name: Package portable Windows build
+        shell: powershell
+        run: .\package.ps1
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FolderLens-Windows
+          path: |
+            dist/FolderLens-Windows.zip
+            dist/SHA256SUMS.txt
+
+      - name: Create tagged release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "${{ github.ref_name }}"
+          "dist/FolderLens-Windows.zip"
+          "dist/SHA256SUMS.txt"
+          "FolderLens.exe"
+          --title "FolderLens ${{ github.ref_name }}"
+          --generate-notes
